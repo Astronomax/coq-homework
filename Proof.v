@@ -30,12 +30,12 @@ Check
 
 (* Exercise 5: We can always add double negation (but cannot drop it in general) *)
 Check
-  (_)
+  (fun a => (fun x f => f x) a)
 : A -> ~ ~ A.
 
 (* Exercise 6: Although we can in some special cases like the following: *)
 Check
-  (_)
+  (fun g => (fun a => g ((fun b => (fun x f => f x) b) a)))
 : ~ ~ ~ A -> ~ A.
 
 (* Exercise 7: Prove we cannot add the negation of the law of excluded middle and have a sound logic.
