@@ -13,16 +13,17 @@ Section Logic.
 Definition and_via_ex (A B : Prop) :
   (exists (_ : A), B) <-> A /\ B
 := conj 
-    (fun EXx => match EXx with
-      ex_intro _ x Px => conj x Px 
+  (fun EXx => 
+    match EXx with
+      | ex_intro _ x Px => conj x Px 
     end)
-    (fun aCb => ex_intro _ ((proj1 aCb) : A) ((proj2 aCb) : B)).
+  (fun aCb => ex_intro _ ((proj1 aCb) : A) ((proj2 aCb) : B)).
 
 (** Exercise: The dual Frobenius rule *)
 
 Definition Frobenius2 :=
   forall (A : Type) (P : A -> Prop) (Q : Prop),
-    (forall x, Q \/ P x) <-> (Q \/ forall x, P x).
+(forall x, Q \/ P x) <-> (Q \/ forall x, P x).
 
 Definition LEM_iff_Frobenius2 :
   (forall P : Prop, P \/ ~ P) <-> Frobenius2
@@ -53,39 +54,37 @@ forall (f : A -> B), f =1 f
 Definition eqext_sym :
 forall (f g : A -> B), f =1 g -> g =1 f
 := fun f g fEQg x =>
-match
-(fEQg x)
-with
-| eq_refl => eq_refl (f x)
-end.
+  match (fEQg x) with
+    | eq_refl => eq_refl (f x)
+  end.
 
 (** Exercise: Transitivity *)
 Definition eqext_trans :
   forall (f g h : A -> B), f =1 g -> g =1 h -> f =1 h
 := fun f g h fEQg gEQh x => 
-      match (eqext_sym f g fEQg) x
-      with 
-      | eq_refl => match gEQh x with 
-        | eq_refl => eq_refl (g x)
-      end
-        end.
+  match (eqext_sym f g fEQg) x with 
+    | eq_refl => 
+    match gEQh x with 
+      | eq_refl => eq_refl (g x)
+    end
+  end.
 
 (** Exercise: left congruence *)
 Definition eq_compl :
   forall (f g : A -> B) (h : B -> C),
     f =1 g -> h \o f =1 h \o g
-:= fun f g h fEQg x => match fEQg x 
-      with 
-      | eq_refl => eq_refl (h (f x)) 
-      end.
+:= fun f g h fEQg x => 
+  match fEQg x with 
+    | eq_refl => eq_refl (h (f x)) 
+  end.
 
 (** Exercise: right congruence *)
 Definition eq_compr :
   forall (f g : B -> C) (h : A -> B),
     f =1 g -> f \o h =1 g \o h
-:= fun f g h fEQg x => match fEQg (h x) 
-      with 
-      | eq_refl => eq_refl (f (h x)) 
-      end.
+:= fun f g h fEQg x => 
+  match fEQg (h x) with 
+    | eq_refl => eq_refl (f (h x)) 
+  end.
 
 End ExtensionalEqualityAndComposition.
