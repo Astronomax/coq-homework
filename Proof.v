@@ -1,45 +1,70 @@
-Section foo.
+(* Write your proof terms in place of `provide_solution` *)
+(* Do not use tactics! *)
 
-(* Write your proof terms in place of underscores below ("_") *)
+Axiom provide_solution : forall {A}, A.
 
-Variables A B C : Prop.
+Section Logic.
 
-(* Exercise 1: Prove implication is transitive. What does this logical lemma correspond to in functional programming? *)
-Check
-  (fun a b x => b (a x))
-: (A -> B) -> (B -> C) -> (A -> C).
+(** Exercise: show that existential quantifier (the `ex` type) is a more general case of conjunction (the `and` type).
+    This is because terms of type `ex` are dependent pairs, while terms of type `and`
+    are non-dependent pairs, i.e. the type of the second component in independent of the
+    value of the first one. *)
 
-(* Exercise 2: Prove conjunction is associative *)
-Check
-  (fun x => conj (proj1 (proj1 x)) (conj (proj2 (proj1 x)) (proj2 x)))
-: (A /\ B) /\ C -> A /\ (B /\ C).
+Definition and_via_ex (A B : Prop) :
+  (exists (_ : A), B) <-> A /\ B
+:= provide_solution.
 
-(* Exercise 3: Prove disjunction distributes over conjunction: *)
-Check
-  (fun x => 
-  match x with 
-    | or_introl a => conj (or_introl a) (or_introl a)
-    | or_intror b => conj (or_intror (proj1 b)) (or_intror (proj2 b))
-    end)
-: A \/ (B /\ C) -> (A \/ B) /\ (A \/ C).
+(** Exercise: The dual Frobenius rule *)
 
-(* Exercise 4: Prove weak form of Peirce's law holds in intuitionistic logic *)
-Check
-  (fun q => q (fun p => p (fun a => q (fun aba => a))))
-: ((((A -> B) -> A) -> A) -> B) -> B.
+Definition Frobenius2 :=
+  forall (A : Type) (P : A -> Prop) (Q : Prop),
+    (forall x, Q \/ P x) <-> (Q \/ forall x, P x).
 
-(* Exercise 5: We can always add double negation (but cannot drop it in general) *)
-Check
-  (fun a => (fun f => f a))
-: A -> ~ ~ A.
+Definition LEM_iff_Frobenius2 :
+  (forall P : Prop, P \/ ~ P) <-> Frobenius2
+:= provide_solution.
 
-(* Exercise 6: Although we can in some special cases like the following: *)
-Check
-  (fun g => (fun a => g (fun f => f a)))
-: ~ ~ ~ A -> ~ A.
+End Logic.
 
-(* Exercise 7: Prove we cannot add the negation of the law of excluded middle and have a sound logic.
-   Keep in mind that "~ A" means "A -> False" *)
-Check
-  (fun f => f (or_intror (fun a => f (or_introl a))))
-: ~ ~ (A \/ ~ A).
+Section ExtensionalEqualityAndComposition.
+
+Variables A B C D : Type.
+
+Notation "f \o g" := (fun x => f (g x)) (at level 50).
+Notation "f =1 g" := (forall x, f x = g x) (at level 70, no associativity).
+
+(** [=1] stands for extensional equality on unary functions *)
+
+(** Exercise : associativity of function composition *)
+Definition compA (f : A -> B) (g : B -> C) (h : C -> D) :
+  (h \o g) \o f = h \o (g \o f)
+:= provide_solution.
+
+(** Exercise: Reflexivity *)
+Definition eqext_refl :
+  forall (f : A -> B), f =1 f
+:= provide_solution.
+
+(** Exercise: Symmetry *)
+Definition eqext_sym :
+  forall (f g : A -> B), f =1 g -> g =1 f
+:= provide_solution.
+
+(** Exercise: Transitivity *)
+Definition eqext_trans :
+  forall (f g h : A -> B), f =1 g -> g =1 h -> f =1 h
+:= provide_solution.
+
+(** Exercise: left congruence *)
+Definition eq_compl :
+  forall (f g : A -> B) (h : B -> C),
+    f =1 g -> h \o f =1 h \o g
+:= provide_solution.
+
+(** Exercise: right congruence *)
+Definition eq_compr :
+  forall (f g : B -> C) (h : A -> B),
+    f =1 g -> f \o h =1 g \o h
+:= provide_solution.
+
+End ExtensionalEqualityAndComposition.
